@@ -1,0 +1,11 @@
+sample,fastq_1,fastq_2,strandedness
+Treg_sub1_1,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/1--1_R1_001.fastq.gz,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/1--1_R2_001.fastq.gz,unstranded
+Treg_ctrl_1,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/1--2_R1_001.fastq.gz,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/1--2_R2_001.fastq.gz,unstranded
+EngTreg1_1,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/1--3_R1_001.fastq.gz,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/1--3_R2_001.fastq.gz,unstranded
+EngTreg2_1,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/1--4_R1_001.fastq.gz,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/1--4_R2_001.fastq.gz,unstranded
+Treg_sub1_2,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/2--5_R1_001.fastq.gz,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/2--5_R2_001.fastq.gz,unstranded
+Treg_ctrl_2,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/2--6_R1_001.fastq.gz,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/2--6_R2_001.fastq.gz,unstranded
+EngTreg1_2,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/2--7_R1_001.fastq.gz,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/2--7_R2_001.fastq.gz,unstranded
+EngTreg2_2,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/2--8_R1_001.fastq.gz,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/2--8_R2_001.fastq.gz,unstranded
+Tcon_ctrl_1,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/1--9_R1_001.fastq.gz,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/1--9_R2_001.fastq.gz,unstranded
+Tcon_ctrl_2,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/2--10_R1_001.fastq.gz,/home/xli/Raw_Data/highlander/bulkRNAseq/30-608912618/00_fastq/2--10_R2_001.fastq.gz,unstranded
