@@ -71,7 +71,7 @@ def is_aws_igenome = false
 if (params.fasta && params.gtf) {
     if ((file(params.fasta).getName() - '.gz' == 'genome.fa') && (file(params.gtf).getName() - '.gz' == 'genes.gtf')) {
         is_aws_igenome = true
-    }    
+    }
 }
 
 /*
@@ -80,8 +80,10 @@ if (params.fasta && params.gtf) {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config) : Channel.empty()
+ch_multiqc_config          = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+ch_multiqc_custom_config   = params.multiqc_config ? Channel.fromPath( params.multiqc_config, checkIfExists: true ) : Channel.empty()
+ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.multiqc_logo, checkIfExists: true ) : Channel.empty()
+ch_multiqc_custom_methods_description = params.multiqc_methods_description ? file(params.multiqc_methods_description, checkIfExists: true) : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
 
 // Header files for MultiQC
 ch_pca_header_multiqc        = file("$projectDir/assets/multiqc/deseq2_pca_header.txt", checkIfExists: true)
@@ -128,15 +130,15 @@ include { QUANTIFY_SALMON as QUANTIFY_SALMON      } from '../subworkflows/local/
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { CAT_FASTQ                   } from '../modules/nf-core/modules/cat/fastq/main'
-include { BBMAP_BBSPLIT               } from '../modules/nf-core/modules/bbmap/bbsplit/main'
-include { SAMTOOLS_SORT               } from '../modules/nf-core/modules/samtools/sort/main'
-include { PRESEQ_LCEXTRAP             } from '../modules/nf-core/modules/preseq/lcextrap/main'
-include { QUALIMAP_RNASEQ             } from '../modules/nf-core/modules/qualimap/rnaseq/main'
-include { SORTMERNA                   } from '../modules/nf-core/modules/sortmerna/main'
-include { STRINGTIE_STRINGTIE         } from '../modules/nf-core/modules/stringtie/stringtie/main'
-include { SUBREAD_FEATURECOUNTS       } from '../modules/nf-core/modules/subread/featurecounts/main'
-include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/dumpsoftwareversions/main'
+include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
+include { BBMAP_BBSPLIT               } from '../modules/nf-core/bbmap/bbsplit/main'
+include { SAMTOOLS_SORT               } from '../modules/nf-core/samtools/sort/main'
+include { PRESEQ_LCEXTRAP             } from '../modules/nf-core/preseq/lcextrap/main'
+include { QUALIMAP_RNASEQ             } from '../modules/nf-core/qualimap/rnaseq/main'
+include { SORTMERNA                   } from '../modules/nf-core/sortmerna/main'
+include { STRINGTIE_STRINGTIE         } from '../modules/nf-core/stringtie/stringtie/main'
+include { SUBREAD_FEATURECOUNTS       } from '../modules/nf-core/subread/featurecounts/main'
+include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 
 //
 // SUBWORKFLOW: Consisting entirely of nf-core/modules
@@ -179,7 +181,7 @@ workflow RNASEQ {
     ch_versions = ch_versions.mix(PREPARE_GENOME.out.versions)
 
     // Check if contigs in genome fasta file > 512 Mbp
-    if (!params.skip_alignment) {
+    if (!params.skip_alignment && !params.bam_csi_index) {
         PREPARE_GENOME
             .out
             .fai
@@ -197,7 +199,7 @@ workflow RNASEQ {
         meta, fastq ->
             def meta_clone = meta.clone()
             meta_clone.id = meta_clone.id.split('_')[0..-2].join('_')
-            [ meta_clone, fastq ] 
+            [ meta_clone, fastq ]
     }
     .groupTuple(by: [0])
     .branch {
@@ -264,7 +266,7 @@ workflow RNASEQ {
                 }
             }
             .set { ch_num_trimmed_reads }
-        
+
         MULTIQC_TSV_FAIL_TRIMMED (
             ch_num_trimmed_reads.collect(),
             ["Sample", "Reads after trimming"],
@@ -763,11 +765,16 @@ workflow RNASEQ {
         workflow_summary    = WorkflowRnaseq.paramsSummaryMultiqc(workflow, summary_params)
         ch_workflow_summary = Channel.value(workflow_summary)
 
+        methods_description    = WorkflowRnaseq.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description)
+        ch_methods_description = Channel.value(methods_description)
+    
         MULTIQC (
             ch_multiqc_config,
             ch_multiqc_custom_config.collect().ifEmpty([]),
             CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect(),
             ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'),
+            ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'),
+            ch_multiqc_logo.collect().ifEmpty([]),
             ch_fail_trimming_multiqc.ifEmpty([]),
             ch_fail_mapping_multiqc.ifEmpty([]),
             ch_fail_strand_multiqc.ifEmpty([]),
@@ -814,6 +821,11 @@ workflow.onComplete {
     if (params.email || params.email_on_fail) {
         NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report, fail_percent_mapped)
     }
+
+    if (params.hook_url) {
+        NfcoreTemplate.adaptivecard(workflow, params, summary_params, projectDir, log)
+    }
+
     NfcoreTemplate.summary(workflow, params, log, fail_percent_mapped, pass_percent_mapped)
 }
 
