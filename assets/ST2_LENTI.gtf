@@ -1,0 +1,3 @@
+ST2	BestRefSeq	exon	1	347	.	+	.	gene_id "ST2"; gene_name "ST2"; transcript_id "MND"; tss_id "TSS31672";
+ST2	BestRefSeq	exon	378	2045	.	+	.	gene_id "ST2"; gene_name "ST2"; transcript_id "hIL1RL1"; tss_id "TSS31672";
+ST2	BestRefSeq	exon	2124	2945	.	+	.	gene_id "ST2"; gene_name "ST2"; transcript_id "hLNGFR"; tss_id "TSS31672";
