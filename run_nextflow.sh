@@ -13,11 +13,12 @@ chmod 744 ./fastq_dir_to_samplesheet.py
 ## Default testing
 #nextflow run nf-core/rnaseq -profile test,docker --outdir ./results/ \
 
-nextflow run nf-core/rnaseq --input ${PATH_fastq}/samplesheet_ST2_Treg.csv \
---outdir ./results/ST2_Treg/ -profile docker \
+nextflow run nf-core/rnaseq --input ${PATH_fastq}/samplesheet.csv \
+--outdir ./results/samples/ -profile docker \
 --max_cpus 16 --max_memory 128.GB \
 --skip_fastqc --skip_qualimap --skip_markduplicates --skip_stringtie \
 -N xiang.li@gentibio.com \
+--genome GRCh38 \ ## default genome
 --fasta /home/ec2-user/Processed_Data/ST2_LENTI.fa \
 --gtf /home/ec2-user/Processed_Data/ST2_LENTI.gtf \
 -resume
